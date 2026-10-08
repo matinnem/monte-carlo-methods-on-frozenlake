@@ -118,7 +118,7 @@ random, guaranteeing coverage without needing special episode starts.\
 ***monte-carlo-epsilon-greedy python code needs some fixes, the agent doesn't avoid pits to access to goal.***\
 **Output:**
 
-![MC ε-greedy output](images/final.png)
+![MC ε-greedy output](images/finalepsilonGreedy.png)
 
 ---
 
