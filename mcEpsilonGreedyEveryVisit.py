@@ -1,29 +1,26 @@
 import numpy as np
 
 global state_space, action_space, pits, goals
-state_space = {'s1': [1,1], 's2': [1,2],
-               's3': [2,1], 's4': [2,2]}
-#state_space = {'s1': [1,1], 's2': [1,2], 's3': [1,3], 's4': [1,4], 's5': [1,5],
-               #'s6': [2,1], 's7': [2,2], 's8': [2,3], 's9': [2,4], 's10': [2,5],
-               #'s11': [3,1], 's12': [3,2], 's13': [3,3], 's14': [3,4], 's15': [3,5],
-               #'s16': [4,1], 's17': [4,2], 's18': [4,3], 's19': [4,4], 's20': [4,5],
-               #'s21': [5,1], 's22': [5,2], 's23': [5,3], 's24': [5,4], 's25': [5,5]}
+
+state_space = {'s1': [1,1], 's2': [1,2], 's3': [1,3], 's4': [1,4], 's5': [1,5],
+               's6': [2,1], 's7': [2,2], 's8': [2,3], 's9': [2,4], 's10': [2,5],
+               's11': [3,1], 's12': [3,2], 's13': [3,3], 's14': [3,4], 's15': [3,5],
+               's16': [4,1], 's17': [4,2], 's18': [4,3], 's19': [4,4], 's20': [4,5],
+               's21': [5,1], 's22': [5,2], 's23': [5,3], 's24': [5,4], 's25': [5,5]}
 action_space = {"↑": 1, "→": 2, "↓": 3, "←": 4, "○": 5}
-# 2,1] is the pit in 2x2
-# [2,2] is the goal in 2x2
+
 # [2,2], [2,3], [3,3], [4,2], [4,4], [5,2] are pits in 5x5
 # [4,3] is the goal in 5x5
 
-#pits = [[2,2], [2,3], [3,3], [4,2], [4,4], [5,2]]
-#goals = [[4,3]]
-pits = [[1,2]]
-goals = [[2,2]]
+pits = [[2,2], [2,3], [3,3], [4,2], [4,4], [5,2]]
+goals = [[4,3]]
+
 
 def reward(state1, action1, state2):
     if state1 == state2:
         if action1 == 5:
             if state2 in pits:
-                return -10
+                return -1
             if state2 in goals:
                 return 1
             else: 
@@ -32,7 +29,7 @@ def reward(state1, action1, state2):
             return -1
     else:
         if state2 in pits:
-            return -10
+            return -1
         elif state2 in goals:
             return 1
         else:
@@ -163,24 +160,28 @@ def selector_policy(state, q, epsilon = 0.5):
     actions = list(action_space.values())
     x = np.random.uniform(0,1)
     if x >= epsilon:
-        return max(actions, key= lambda x: q[state][x])
+        return max(actions, key= lambda a: q[(state, a)])
     else:
-        #actions_min = [a for a in actions if a != aMax]
         random_action = int(np.random.choice(actions))
         return random_action
 
 def episode_generator(q, epsilon = 0.5):
-    num_timesteps = len(state_space) * 10
+    num_timesteps = len(state_space) * 8
     episode = []
     state = 's' + str(np.random.randint(1, len(state_space) + 1))
     num_state = state_space[state]
+
     for t in range(num_timesteps):
         action = selector_policy(state, q, epsilon)
         num_next_state , r = transition(num_state, action)
+        next_state = key_of(num_next_state)
         episode.append((state, action, r))
-        if num_next_state in goals or num_next_state in pits:
+        done = num_next_state in goals and action== 5# or num_next_state in pits
+        if done:
             break
         num_state = num_next_state
+        state = next_state
+        
     return tuple(episode)
 
 
@@ -201,7 +202,7 @@ def key_of_action(val):
 
 
 # ---------------------------------------------------------------- pretty print
-def render_box(v_pi, pi, title=None):
+def render_box(qs, pi, title=None):
     size = int(np.sqrt(len(state_space)))
     """Pretty-print the size x size grid as aligned boxes."""
     W = 11  # cell width
@@ -227,8 +228,11 @@ def render_box(v_pi, pi, title=None):
     def cell(row, col):
 
         s = f"s{row * size + col + 1}"          # s_1... s_final
-        v = float(v_pi[s])
-        a = inv[int(pi[s])]
+        pi_as = {a_i: pi[(a_i,s)] for a_i in action_space.values()}
+        a = max(pi_as, key=pi_as.get)
+        q = qs[(s,a)]
+        sign_a = key_of_action(a)
+
         # small suffix so pits / goal pop out at a glance
         if (row + 1, col + 1) in PITS:
             s = s + "·P"
@@ -236,8 +240,8 @@ def render_box(v_pi, pi, title=None):
             s = s + "·G"
         return (
             f"{s:^{W}}",
-            f"{('q = ' + format(v, '>7.2f')):^{W}}",
-            f"{a:^{W}}",
+            f"{('q = ' + format(q, '>7.2f')):^{W}}",
+            f"{sign_a:^{W}}",
         )
 
     grid = [[cell(r, c) for c in range(size)] for r in range(size)]
@@ -251,14 +255,12 @@ def render_box(v_pi, pi, title=None):
     print(bot)
 
 
-
-
 pi_s = {key : 5 for key in state_space} # initial guess for the policy.
 
-pi_s_prob = {(s, a): 0.0 for s in state_space for a in action_space.keys()} 
-q_s = { key1: {key2 : 0.0 for key2 in action_space.values()} for key1 in state_space}
-nums = {key1: {key2: 0.0 for key2 in action_space.values()} for key1 in state_space}
-returns = {key1: {key2: 0.0 for key2 in action_space.values()} for key1 in state_space}
+pi_s_prob = {(a, s): 0.2 for s in state_space for a in action_space.values()} 
+q_s = {(s, a): 0.0 for s in state_space for a in action_space.values()} 
+nums = {(s, a): 0.0 for s in state_space for a in action_space.values()}
+returns = {(s, a): 0.0 for s in state_space for a in action_space.values()}
 
 
 
@@ -272,44 +274,36 @@ print("═" * 60)
 print(f"  Discount factor γ   : {gamma}")
 print(f"  Total iterations    : (pending)")
 
-render_box(v_s, pi_s, title=f"Initial guess  (k = {0})")
+render_box(q_s, pi_s_prob, title=f"Initial guess  (k = {0})")
 
 
 
 episodes = []
-episodes_num = 30000
+episodes_num = 20000
 A_s_t = len(action_space)
 epsilon = 0.5
 
-
-
-
-
-
 for k in range(episodes_num):
     episode = episode_generator(q_s, epsilon)
-    #all_s_a_pairs = [(s,a) for (s, a, _) in episode]
-    #rewards = [r for (s, a, r) inn episode]
     g = 0
     for _ , step in enumerate(episode[::-1]):
         curr_state, curr_action, next_r = step[0], step[1], step[2]
         g = gamma * g + next_r
-        returns[curr_state][curr_action] += g
-        nums[curr_state][curr_action] += 1
+        returns[(curr_state, curr_action)] += g
+        nums[(curr_state, curr_action)] += 1
         # policy evaluation
-        q_s[curr_state][curr_action] = returns[curr_state][curr_action]/ nums[curr_state][curr_action]
+        q_s[(curr_state, curr_action)] = returns[(curr_state, curr_action)]/ nums[(curr_state, curr_action)]
         # policy improvement
-        a_max = max(q_s[curr_state], key= q_s[curr_state].get)
-        pi_s[curr_state] = a_max
+        q = {a_: q_s[(curr_state, a_)] for a_ in action_space.values()}
+        a_max = max(q, key= q.get)
         for a_num in action_space.values():
             if a_num == a_max:
-                pi_s_prob[(curr_state, key_of_action(a_num))] = round(1 - epsilon * (A_s_t - 1) / A_s_t, 3)
+                pi_s_prob[(a_num, curr_state)] = 1 - epsilon * (A_s_t - 1) / A_s_t
             else:
-                pi_s_prob[(curr_state, key_of_action(a_num))] = round(epsilon / A_s_t, 3)
+                pi_s_prob[(a_num, curr_state)] = epsilon / A_s_t
 
-    v_s[curr_state] = q_s[curr_state][a_max]
     if k % 1000 == 0:
-        render_box(v_s, pi_s, title=f"After episode number:(k = {k})")
+        render_box(q_s, pi_s_prob, title=f"After episode number:(k = {k})")
 
         
 
@@ -317,8 +311,10 @@ print()
 print("═" * 60)
 print(f"  Converged after {k} MC Exploring starts steps")
 print("═" * 60)
-render_box(v_s, pi_s, title="Final optimal policy & state values")
+render_box(q_s, pi_s_prob, title="Final optimal policy & state values")
 print()
 
 print("probability of every policy")
-print(pi_s_prob)
+for s in state_space:
+    for a_sign, a in action_space.items():
+        print(s, a_sign, pi_s_prob[(a, s)], round(q_s[(s,a)],3))
