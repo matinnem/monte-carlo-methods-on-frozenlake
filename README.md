@@ -113,8 +113,8 @@ $π(a | s) = ε/|A|$ otherwise
 
 This is **on-policy** MC: the policy used to explore is also the policy
 being evaluated and improved. A small fraction `ε` of actions is always
-random, guaranteeing coverage without needing special episode starts.
-*monte-carlo-epsilon-greedy python code needs some fixes*
+random, guaranteeing coverage without needing special episode starts.\
+*monte-carlo-epsilon-greedy python code needs some fixes, the agent doesn't avoid pits to access to goal.*
 **Output:**
 
 ![MC ε-greedy output](images/final.png)
