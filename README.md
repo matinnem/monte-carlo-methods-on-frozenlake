@@ -25,8 +25,8 @@ The idea is beautifully simple: the value of a state (or state–action pair)
 is the **expected return** starting from it. So the MC estimate is just the
 **average of observed returns**:
 
-$V(s) ≈ (1 / N(s)) · Σ Gₜ over all visits to s
-Q(s,a) ≈ (1 / N(s,a)) · Σ Gₜ$ over all visits to (s,a)$
+$V(s) ≈ (1 / N(s)) · Σ Gₜ over all visits to s$
+$Q(s,a) ≈ (1 / N(s,a)) · Σ Gₜ$ over all visits to (s,a)$
 
 
 No Bellman operator. No iteration to a fixed point. No model. Just samples.
