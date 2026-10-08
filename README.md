@@ -58,8 +58,8 @@ episode: s₁ → s₂ → s₁ → s₃ → terminal\
 
 **Every-visit MC** — every occurrence contributes.\
 episode: s₁ → s₂ → s₁ → s₃ → terminal\
-↑ ↑\
-count count too
+`         ↑        ↑`\
+`       count     count too`
 
 ### Differences
 
