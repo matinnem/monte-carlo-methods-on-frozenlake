@@ -50,15 +50,15 @@ It waits until an episode ends, computes the return, and averages.
 There are two ways to count visits to a state within an episode:
 
 **First-visit MC** — only the **first** time a state (or state–action pair)
-appears in an episode contributes to the average.
-episode: s₁ → s₂ → s₁ → s₃ → terminal
-↑ ↑
+appears in an episode contributes to the average.\
+episode: s₁ → s₂ → s₁ → s₃ → terminal\
+↑ ↑\
 first ignore (second visit)
 
 
-**Every-visit MC** — every occurrence contributes.
-episode: s₁ → s₂ → s₁ → s₃ → terminal
-↑ ↑
+**Every-visit MC** — every occurrence contributes.\
+episode: s₁ → s₂ → s₁ → s₃ → terminal\
+↑ ↑\
 count count too
 
 ### Differences
