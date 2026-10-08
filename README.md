@@ -115,7 +115,8 @@ This is **on-policy** MC: the policy used to explore is also the policy
 being evaluated and improved. A small fraction `ε` of actions is always
 random, guaranteeing coverage without needing special episode starts.\
 \
-***monte-carlo-epsilon-greedy python code needs some fixes, the agent doesn't avoid pits to access to goal.***\
+***monte-carlo-epsilon-greedy python code needs some fixes, the agent sometimes doesn't avoid pits to access the goal.***\
+\
 **Output:**
 
 ![MC ε-greedy output](images/finalepsilonGreedy.png)
