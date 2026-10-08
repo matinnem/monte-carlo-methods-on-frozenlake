@@ -79,7 +79,7 @@ every-visit is often simpler to code.
 
 ---
 the inital policy is staying for every state as follows:
-![initial policy](https://raw.githubusercontent.com/matinnem/monte-carlo-methods-on-frozenlake/monte-carlo-basic/images/init.png)
+![initial policy](images/init.png)
 
 ## The three algorithms
 
