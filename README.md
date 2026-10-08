@@ -78,7 +78,7 @@ every-visit is often simpler to code.
 **This repo uses every-visit MC in all three branches.**
 
 ---
-the inital policy is staying for every state as follows:
+the inital policy is staying for every state as follows:\
 ![initial policy](images/init.png)
 
 ## The three algorithms
@@ -100,7 +100,7 @@ cleanest version to read and the baseline for the two optimizations below.
 
 **Output:**
 
-![MC basic output](https://raw.githubusercontent.com/matinnem/monte-carlo-methods-on-frozenlake/monte-carlo-basic/images/final.png)
+![MC basic output](images/final.png)
 
 ---
 
@@ -117,7 +117,7 @@ random, guaranteeing coverage without needing special episode starts.
 
 **Output:**
 
-![MC ε-greedy output](https://raw.githubusercontent.com/matinnem/monte-carlo-methods-on-frozenlake/monte-carlo-epsilon-greedy/images/final.png)
+![MC ε-greedy output](images/final.png)
 
 ---
 
@@ -135,7 +135,7 @@ being recomputed for each state separately.
 
 **Output:**
 
-![MC exploring starts output](https://raw.githubusercontent.com/matinnem/monte-carlo-methods-on-frozenlake/monte-carlo-exploring-starts/images/final.png)
+![MC exploring starts output](images/final.png)
 
 ---
 
